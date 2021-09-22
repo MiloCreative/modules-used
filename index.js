@@ -15,27 +15,43 @@ function modulesUsed() {
   function dependencyDescription(name) {
     var filename = join(cwd, 'node_modules', name, 'package.json');
     var pkg = JSON.parse(read(filename));
+    if (pkg.name === 'react-native') {
+      //console.log(pkg)
+      console.log("RN",homepageOrRepositoryUrl(pkg))
+    }
     return {
       name: pkg.name,
+      version: pkg.version,
       description: pkg.description,
-      homepage: pkg.homepage
+      homepage: pkg.homepage,
+      repository: pkg.repository
     };
   }
 
-  function hasHomepage(info) {
-    return typeof info.homepage === 'string' && info.homepage;
+  function hasHomepageOrRepositoryUrl(info) {
+    return homepageOrRepositoryUrl(info) !== undefined;
   }
 
   function mdWithHomepage(info) {
-    return '* [' + info.name + '](' + info.homepage + ') - ' + info.description;
+    return '* [' + info.name + ' ' + info.version + '](' + homepageOrRepositoryUrl(info) + ') - ' + info.description;
   }
 
   function mdWithoutHomepage(info) {
-    return '* ' + info.name + ' - ' + info.description;
+    return '* ' + info.name + ' ' + info.version + ' - ' + info.description;
+  }
+
+  function homepageOrRepositoryUrl(info) {
+    if (typeof info.homepage === 'string' && info.homepage !== undefined) {
+      return info.homepage;
+    } else if (info?.repository?.url !== undefined) {
+      return info.repository.url.replace('git@github.com:','https://github.com/');
+    } else {
+      return undefined;
+    }
   }
 
   function toMarkdown(info) {
-    if (hasHomepage(info)) {
+    if (hasHomepageOrRepositoryUrl(info)) {
       return mdWithHomepage(info);
     } else {
       return mdWithoutHomepage(info);
