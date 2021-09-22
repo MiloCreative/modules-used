@@ -15,10 +15,6 @@ function modulesUsed() {
   function dependencyDescription(name) {
     var filename = join(cwd, 'node_modules', name, 'package.json');
     var pkg = JSON.parse(read(filename));
-    if (pkg.name === 'react-native') {
-      //console.log(pkg)
-      console.log("RN",homepageOrRepositoryUrl(pkg))
-    }
     return {
       name: pkg.name,
       version: pkg.version,
